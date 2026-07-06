@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub Repo Analyzer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="crt-line"></div>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <span class="brand-dot"></span>
+      <span class="brand-text">repo<span class="brand-accent">analyzer</span></span>
+    </div>
+    <span class="brand-sub">// python + pandas + github api</span>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="hero">
+    <p class="eyebrow">$ python github_analyzer.py</p>
+    <h1>Analyze any GitHub user's<br><span class="accent-text">repository footprint.</span></h1>
+    <p class="hero-copy">Pulls every public repo for a username straight from the GitHub REST API,
+      loads it into a Pandas DataFrame, and gives you sorted stats: stars, forks, languages, and more.</p>
+  </section>
+
+  <section class="terminal">
+    <div class="terminal-bar">
+      <span class="tdot r"></span><span class="tdot y"></span><span class="tdot g"></span>
+      <span class="terminal-title">analyze.sh</span>
+    </div>
+    <div class="terminal-body">
+      <form id="analyze-form" autocomplete="off">
+        <div class="prompt-row">
+          <span class="prompt-sign">$ analyze</span>
+          <input type="text" id="username" placeholder="e.g. torvalds" required>
+        </div>
+        <div class="options-row">
+          <label class="opt">
+            sort by
+            <select id="sort_by">
+              <option value="stars">stars</option>
+              <option value="forks">forks</option>
+              <option value="updated_at">last updated</option>
+              <option value="created_at">created date</option>
+              <option value="name">name</option>
+              <option value="open_issues">open issues</option>
+            </select>
+          </label>
+          <label class="opt">
+            order
+            <select id="ascending">
+              <option value="false">descending</option>
+              <option value="true">ascending</option>
+            </select>
+          </label>
+          <label class="opt token-opt">
+            token <span class="hint">(optional)</span>
+            <input type="password" id="token" placeholder="ghp_...">
+          </label>
+          <button type="submit" id="run-btn">run &rsaquo;</button>
+        </div>
+      </form>
+      <div id="status-line" class="status-line"></div>
+    </div>
+  </section>
+
+  <section id="results" class="results hidden">
+
+    <div class="summary-grid">
+      <div class="stat-card">
+        <span class="stat-label">repositories</span>
+        <span class="stat-value" id="stat-repos">0</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">total stars</span>
+        <span class="stat-value" id="stat-stars">0</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">total forks</span>
+        <span class="stat-value" id="stat-forks">0</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">avg stars / repo</span>
+        <span class="stat-value" id="stat-avg">0</span>
+      </div>
+      <div class="stat-card wide">
+        <span class="stat-label">top language</span>
+        <span class="stat-value" id="stat-lang">-</span>
+      </div>
+      <div class="stat-card wide">
+        <span class="stat-label">most starred repo</span>
+        <span class="stat-value stat-value-link" id="stat-top-repo">-</span>
+      </div>
+    </div>
+
+    <div class="charts-grid">
+      <div class="chart-card">
+        <h3>language distribution</h3>
+        <canvas id="languageChart"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>top 8 repos by stars</h3>
+        <canvas id="starsChart"></canvas>
+      </div>
+    </div>
+
+    <div class="table-card">
+      <div class="table-head">
+        <h3>repository table</h3>
+        <button id="export-btn" class="ghost-btn">export csv &darr;</button>
+      </div>
+      <div class="table-scroll">
+        <table id="repo-table">
+          <thead>
+            <tr>
+              <th>name</th>
+              <th>language</th>
+              <th>stars</th>
+              <th>forks</th>
+              <th>issues</th>
+              <th>updated</th>
+            </tr>
+          </thead>
+          <tbody id="repo-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </section>
+
+  <section id="empty-state" class="empty-state">
+    <pre class="ascii">
+    ___
+   /  /\
+  /  /##\
+ /__/####\
+ \  \####/
+  \  \##/
+   \__\/
+    </pre>
+    <p>No data yet. Type a GitHub username above and hit <strong>run</strong>.</p>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <p>Built with Flask, Pandas &amp; the GitHub REST API &mdash; Python Summer Training Final Project</p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
